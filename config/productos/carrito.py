@@ -14,7 +14,7 @@ class Carrito:
         if producto_id not in self.cart:
             self.cart[producto_id] = {
                 "cantidad": 0,
-                "precio": str(producto.precio),  # guardamos como string
+                "precio": str(producto.precio),  # guarda como string
                 "nombre": producto.nombre,
             }
         self.cart[producto_id]["cantidad"] += cantidad
@@ -22,6 +22,14 @@ class Carrito:
         if self.cart[producto_id]["cantidad"] > producto.stock:
             self.cart[producto_id]["cantidad"] = producto.stock
         self.save()
+
+    def restar(self, producto):
+        id = str(producto.id)
+        if id in self.cart:
+            self.cart[id]["cantidad"] -= 1
+            if self.cart[id]["cantidad"] <= 0:
+                self.remove(producto)
+            self.save()
 
     def remove(self, producto: Producto):
         producto_id = str(producto.id)

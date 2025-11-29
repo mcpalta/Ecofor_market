@@ -40,7 +40,7 @@
             <tr>
               <td>{{ p.id }}</td>
               <td>{{ p.nombre }}</td>
-              <td>${{ p.precio|floatformat:0 }}</td>
+              <td>{{ p.precio|clp }}</td>
               <td>{{ p.stock }}</td>
               <td>{{ p.get_categoria_display }}</td>
               <td>

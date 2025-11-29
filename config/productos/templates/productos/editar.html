@@ -49,7 +49,7 @@
                 <option value="contenedores" {% if producto.categoria == 'contenedores' %}selected{% endif %}>Contenedores</option>
                 <option value="basureros" {% if producto.categoria == 'basureros' %}selected{% endif %}>Basureros</option>
                 <option value="articulos_limpieza" {% if producto.categoria == 'articulos_limpieza' %}selected{% endif %}>Artículos de limpieza</option>
-                <option value="aseo_general" {% if producto.categoria == 'aseo_general' %}selected{% endif %}>Aseo General</option>
+                <option value="aseo" {% if producto.categoria == 'aseo' %}selected{% endif %}>Aseo</option>
             </optgroup>
 
             <optgroup label="Productos Químicos">
@@ -84,6 +84,13 @@
         <label class="form-label">Nueva imagen (opcional):</label>
         <input type="file" name="imagen" accept="image/*">
         <small class="form-help">Si no seleccionas nada, se mantendrá la imagen actual.</small>
+      </div>
+
+      <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: 15px;">
+        <input type="checkbox" name="activo" id="id_activo" 
+               {% if producto.activo %}checked{% endif %} 
+               style="width: 20px; height: 20px;">
+        <label for="id_activo" class="form-label" style="margin-bottom: 0;">¿Visible en el catálogo?</label>
       </div>
 
       <div class="form-actions">

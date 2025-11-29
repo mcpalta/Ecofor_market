@@ -120,10 +120,21 @@ main {
 /* ===== Grid de productos ===== */
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 30px;
 }
 
+@media (max-width: 1100px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+}
 .product-card {
     background-color: #ffffff;
     border-radius: 18px;
@@ -160,6 +171,7 @@ main {
     background-color: #0b3b2a;
     color: #ffffff;
     padding: 3rem 0;
+    min-height: 80vh;
 }
 
 .auth-card {
@@ -169,12 +181,27 @@ main {
     border-radius: 18px;
     padding: 2.5rem 3rem;
     box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+    
+    color: #ffffff; 
+}
+
+.auth-card a {
+    color: #F0E6C0;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.auth-card a:hover {
+    color: #ffffff;
+    text-decoration: underline;
 }
 
 .auth-title {
     text-align: center;
     margin-bottom: 1.5rem;
     font-size: 1.6rem;
+    color: #ffffff;
 }
 
 .form-grid-2 {
@@ -191,9 +218,11 @@ main {
     font-size: 0.9rem;
     margin-bottom: 0.3rem;
     display: block;
+    color: #e0e0e0;
+    font-weight: 500;
 }
 
-/* Inputs de formularios dentro de auth-card */
+/* Inputs de formularios */
 .auth-card input[type="text"],
 .auth-card input[type="password"],
 .auth-card input[type="email"],
@@ -204,6 +233,13 @@ main {
     border-radius: 999px;
     border: 1px solid #cbd2e1;
     font-size: 0.9rem;
+    
+    background-color: #ffffff; 
+    color: #333333; 
+}
+
+.auth-card input::placeholder {
+    color: #999999;
 }
 
 .auth-card input[type="text"]:focus,
@@ -213,9 +249,8 @@ main {
 .auth-card select:focus {
     outline: none;
     border-color: #f2c14f;
-    box-shadow: 0 0 0 2px rgba(242,193,79,0.4);
+    box-shadow: 0 0 0 3px rgba(242, 193, 79, 0.3); 
 }
-
 
 .checkbox-row {
     display: flex;
@@ -223,6 +258,7 @@ main {
     gap: 0.5rem;
     margin-top: 0.7rem;
     font-size: 0.85rem;
+    color: #ffffff;
 }
 
 /* ===== Mensajes simples ===== */
@@ -279,7 +315,7 @@ main {
     font-size: 0.8rem;
 }
 
-/* --- COMPRA REALIZADA (SIMULADA) --- */
+/* --- COMPRA REALIZADA (SIMULACION) --- */
 
 .checkout-success-container {
     display: flex;
@@ -674,7 +710,7 @@ main {
     color: #b91c1c;
 }
 
-/* Tarjetas dentro de admin_panel (usa mismo grid del dashboard) */
+/* Tarjetas dentro de admin_panel */
 
 .dashboard-grid {
     display: grid;
@@ -775,3 +811,16 @@ main {
     gap: 0.75rem;
 }
 
+/* Para el texto en login/crear cuenta */
+.form-label {
+    color: #ffffff !important;
+    font-weight: 500;
+}
+
+.auth-card {
+    color: #ffffff !important; 
+}
+
+.auth-title {
+    color: #ffffff !important;
+}

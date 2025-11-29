@@ -1,89 +1,102 @@
 {% extends 'core/base.html' %}
 {% load static %}
-{% load formatos %} {% block title %}Catálogo - Ecofor Market{% endblock %}
+{% load formatos %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'productos/css/catalogo.css' %}">
+{% endblock %}
+
+
+{% block title %}Catálogo - Ecofor Market{% endblock %}
 
 {% block content %}
-<div class="container-catalogo" style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+<div class="catalogo-wrapper">
+    
+    <aside class="catalogo-sidebar">
+        <h3 class="sidebar-header">Categorías</h3>
+        
+        <a href="{% url 'catalogo_productos' %}" 
+           class="cat-link {% if not categoria_seleccionada %}active{% endif %}">
+           Ver Todo
+        </a>
 
-    <div class="search-bar-container" style="text-align: center; margin-bottom: 40px;">
-        <form method="get" action="">
-            <div style="display: inline-flex; gap: 10px; max-width: 600px; width: 100%;">
-                <input type="text" name="buscar" 
-                       placeholder="¿Qué estás buscando? (ej: Cloro, Papel...)" 
-                       value="{{ query|default:'' }}"
-                       style="flex-grow: 1; padding: 12px 20px; border: 1px solid #ccc; border-radius: 25px; outline: none;">
-                
-                <button type="submit" 
-                        style="background-color: #0B3B2E; color: white; border: none; padding: 0 25px; border-radius: 25px; cursor: pointer; font-weight: bold;">
-                    Buscar
-                </button>
-            </div>
-            {% if query %}
-                <div style="margin-top: 10px;">
-                    <small>Resultados para: <strong>"{{ query }}"</strong></small>
-                    <a href="{% url 'catalogo_productos' %}" style="color: #666; margin-left: 10px; font-size: 0.9em;">(Limpiar filtro)</a>
-                </div>
-            {% endif %}
-        </form>
-    </div>
-
-    <div class="product-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px;">
-        {% for producto in page_obj %}
-            <div class="product-card" style="border: 1px solid #eee; border-radius: 15px; padding: 20px; text-align: center; transition: box-shadow 0.3s;">
-                
-                <div style="height: 180px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
-                    {% if producto.imagen %}
-                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
-                    {% else %}
-                        <img src="{% static 'core/img/no-image.png' %}" alt="Sin imagen" style="max-height: 100px; opacity: 0.5;">
-                    {% endif %}
-                </div>
-
-                <h3 style="font-size: 1.1rem; margin: 10px 0; color: #333;">{{ producto.nombre }}</h3>
-                <p style="color: #888; font-size: 0.9rem;">{{ producto.get_categoria_display }}</p>
-                <p style="font-size: 1.2rem; font-weight: bold; color: #0B3B2E; margin: 10px 0;">
-                    {{ producto.precio|clp }}
-                </p>
-
-                <form action="{% url 'agregar_al_carrito' producto.id %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" style="background-color: #EEEae0; border: none; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.2s;">
-                        Agregar al Carrito
-                    </button>
-                </form>
-            </div>
-        {% empty %}
-            <div style="grid-column: 1 / -1; text-align: center; padding: 50px;">
-                <h3>No encontramos productos que coincidan con tu búsqueda</h3>
-                <p>Intenta con otra palabra clave o revisa nuestro catálogo completo.</p>
-                <a href="{% url 'catalogo_productos' %}" class="btn" style="text-decoration: underline;">Ver todos los productos</a>
+        {% for grupo, opciones in lista_categorias %}
+            <div class="cat-group">
+                <h4 class="cat-group-title">{{ grupo }}</h4>
+                <ul class="cat-list">
+                    {% for slug, nombre in opciones %}
+                    <li>
+                        <a href="?categoria={{ slug }}{% if query %}&buscar={{ query }}{% endif %}" 
+                           class="cat-link {% if categoria_seleccionada == slug %}active{% endif %}">
+                            {{ nombre }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
         {% endfor %}
-    </div>
+    </aside>
 
-    {% if page_obj.has_other_pages %}
-    <div class="pagination" style="margin-top: 50px; text-align: center; display: flex; justify-content: center; gap: 5px;">
+
+    <div class="catalogo-main">
         
-        {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}{% if query %}&buscar={{ query }}{% endif %}" 
-               style="padding: 8px 15px; background: #f0f0f0; border-radius: 5px; text-decoration: none; color: #333;">
-               &laquo; Anterior
-            </a>
+        <div class="search-bar-mini">
+            <form method="get" action="">
+                {% if categoria_seleccionada %}
+                    <input type="hidden" name="categoria" value="{{ categoria_seleccionada }}">
+                {% endif %}
+                
+                <input type="text" name="buscar" placeholder="Buscar..." value="{{ query|default:'' }}">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+
+        <div class="product-grid">
+            {% for producto in page_obj %}
+                <div class="product-card">
+                    <div class="card-image-container">
+                        {% if producto.imagen %}
+                            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                        {% else %}
+                            <img src="{% static 'core/img/no-image.png' %}" alt="Sin imagen">
+                        {% endif %}
+                    </div>
+                    <div class="card-info">
+                        <h3 class="card-title">{{ producto.nombre }}</h3>
+                        <p class="precio">{{ producto.precio|clp }}</p>
+                        <form action="{% url 'agregar_al_carrito' producto.id %}" method="post" style="display: flex; gap: 5px; align-items: center; justify-content: center; margin-top: 10px;">
+                            {% csrf_token %}
+                            
+                            <input type="number" name="cantidad" value="1" min="1" max="{{ producto.stock }}" 
+                                style="width: 60px; padding: 5px; border-radius: 10px; border: 1px solid #ccc; text-align: center;">
+                            
+                            <button type="submit" class="btn-add">
+                                Agregar <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="no-results">
+                    <p>No hay productos en esta categoría.</p>
+                    <a href="{% url 'catalogo_productos' %}">Limpiar filtros</a>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if query %}&buscar={{ query }}{% endif %}{% if categoria_seleccionada %}&categoria={{ categoria_seleccionada }}{% endif %}">&laquo;</a>
+            {% endif %}
+            
+            <span class="current">{{ page_obj.number }}</span>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if query %}&buscar={{ query }}{% endif %}{% if categoria_seleccionada %}&categoria={{ categoria_seleccionada }}{% endif %}">&raquo;</a>
+            {% endif %}
+        </div>
         {% endif %}
-
-        <span style="padding: 8px 15px; background: #0B3B2E; color: white; border-radius: 5px;">
-            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
-        </span>
-
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}{% if query %}&buscar={{ query }}{% endif %}" 
-               style="padding: 8px 15px; background: #f0f0f0; border-radius: 5px; text-decoration: none; color: #333;">
-               Siguiente &raquo;
-            </a>
-        {% endif %}
-
     </div>
-    {% endif %}
-
 </div>
 {% endblock %}

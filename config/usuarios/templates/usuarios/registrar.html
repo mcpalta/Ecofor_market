@@ -13,43 +13,85 @@
       {% endfor %}
     {% endif %}
 
+    {% if form.non_field_errors %}
+      <div class="alert-error-global">
+        {% for error in form.non_field_errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     <form method="POST">
       {% csrf_token %}
 
       <div class="form-grid-2">
+        
         <div class="form-group">
           <label class="form-label">Nombre de usuario</label>
           {{ form.username }}
+          {% if form.username.errors %}
+            <div class="form-error">
+              {% for error in form.username.errors %}{{ error }}{% endfor %}
+            </div>
+          {% endif %}
         </div>
 
         <div class="form-group">
           <label class="form-label">Es Persona Natural o Empresa</label>
           {{ form.tipo_cliente }}
+          {% if form.tipo_cliente.errors %}
+            <div class="form-error">
+              {% for error in form.tipo_cliente.errors %}{{ error }}{% endfor %}
+            </div>
+          {% endif %}
         </div>
 
         <div class="form-group">
           <label class="form-label">Correo electrónico</label>
           {{ form.email }}
+          {% if form.email.errors %}
+            <div class="form-error">
+              {% for error in form.email.errors %}{{ error }}{% endfor %}
+            </div>
+          {% endif %}
         </div>
 
         <div class="form-group">
           <label class="form-label">RUT</label>
           {{ form.rut }}
+          {% if form.rut.errors %}
+            <div class="form-error">
+              {% for error in form.rut.errors %}{{ error }}{% endfor %}
+            </div>
+          {% endif %}
         </div>
 
         <div class="form-group">
           <label class="form-label">Contraseña</label>
           {{ form.password1 }}
+          {% if form.password1.errors %}
+            <div class="form-error">
+              {% for error in form.password1.errors %}{{ error }}{% endfor %}
+            </div>
+          {% endif %}
+          {% if form.password1.help_text %}
+            <small class="form-help">{{ form.password1.help_text }}</small>
+          {% endif %}
         </div>
 
         <div class="form-group">
           <label class="form-label">Confirmar contraseña</label>
           {{ form.password2 }}
+          {% if form.password2.errors %}
+            <div class="form-error">
+              {% for error in form.password2.errors %}{{ error }}{% endfor %}
+            </div>
+          {% endif %}
         </div>
       </div>
 
       <div class="checkbox-row">
-        <input type="checkbox">
+        <input type="checkbox" required>
         <span>Yo acepto los términos de servicio y la política de privacidad.</span>
       </div>
 

@@ -56,6 +56,11 @@ def eliminar_producto(request, id):
 
 def catalogo(request):
     productos_list = Producto.objects.filter(activo=True, stock__gt=0).order_by('-creado')
+    # Filtrado por categoría
+    categoria_slug = request.GET.get('categoria')
+    if categoria_slug:
+        productos_list = productos_list.filter(categoria=categoria_slug)
+    # Búsqueda por nombre o descripción
     query = request.GET.get('buscar')
     if query:
         productos_list = productos_list.filter(
@@ -63,19 +68,28 @@ def catalogo(request):
             Q(descripcion__icontains=query) |
             Q(categoria__icontains=query)
         )
+    
     paginator = Paginator(productos_list, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     context = {
         'page_obj': page_obj,
-        'query': query
+        'query': query,
+        'categoria_seleccionada': categoria_slug,
+        'lista_categorias': Producto.CATEGORIAS
     }
     
     return render(request, "productos/catalogo.html", context)
 # ---------------------------------------------------------
 # ZONA CARRITO Y COMPRA
 # ---------------------------------------------------------
+@login_required
+def restar_del_carrito(request, id):
+    producto = get_object_or_404(Producto, id=id)
+    carrito = Carrito(request)
+    carrito.restar(producto)
+    return redirect("ver_carrito")
 
 @login_required
 def agregar_al_carrito(request, id):

@@ -1,6 +1,5 @@
 {% extends 'core/base.html' %}
-
-{% block title %}Carrito de compras - Ecofor Market{% endblock %}
+{% load formatos %} {% block title %}Carrito de compras - Ecofor Market{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -10,26 +9,46 @@
     <table class="cart-table">
       <tr>
         <th>Producto</th>
-        <th>Cantidad</th>
-        <th>Precio unitario</th>
+        <th style="text-align: center;">Cantidad</th> <th>Precio unitario</th>
         <th>Subtotal</th>
         <th></th>
       </tr>
       {% for item in carrito %}
         <tr>
           <td>{{ item.producto.nombre }}</td>
-          <td>{{ item.cantidad }}</td>
-          <td>${{ item.precio }}</td>
-          <td>${{ item.subtotal }}</td>
+          
+          <td style="text-align: center;">
+            <div style="display: inline-flex; align-items: center; gap: 10px;">
+                
+                <a href="{% url 'restar_del_carrito' item.producto.id %}" 
+                   style="background: #ddd; color: black; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-weight: bold;">
+                   -
+                </a>
+
+                <span style="font-weight: bold; font-size: 1.1em;">{{ item.cantidad }}</span>
+
+                <form action="{% url 'agregar_al_carrito' item.producto.id %}" method="POST" style="margin:0;">
+                    {% csrf_token %}
+                    <input type="hidden" name="cantidad" value="1">
+                    <button type="submit" 
+                            style="background: #0B3B2E; color: white; width: 25px; height: 25px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                        +
+                    </button>
+                </form>
+
+            </div>
+          </td>
+          <td>{{ item.precio|clp }}</td>
+          <td>{{ item.subtotal|clp }}</td>
           <td>
-            <a href="{% url 'eliminar_del_carrito' item.producto.id %}" class="btn btn-link">Quitar</a>
+            <a href="{% url 'eliminar_del_carrito' item.producto.id %}" class="btn btn-link" style="color: #dc3545;">Quitar</a>
           </td>
         </tr>
       {% endfor %}
     </table>
 
     <div class="cart-summary">
-      Total: ${{ carrito.total }}
+      Total: {{ carrito.total|clp }}
     </div>
 
     <div style="margin-top:1rem; text-align:right;">

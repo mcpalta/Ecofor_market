@@ -1,73 +1,50 @@
 {% extends 'core/base.html' %}
 {% load static %}
+{% load formatos %}
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'core/css/home.css' %}">
 {% endblock %}
+
+
+ {% block title %}Inicio - Ecofor Market{% endblock %}
 
 {% block content %}
 
 <section class="hero-section">
     </section>
 
-<div class="main-container">
+<div class="home-container">
     
-    <aside class="sidebar">
-        <h3 class="sidebar-title"></h3>
-        
-        <div class="filter-group">
-            <h4>FILTROS</h4>
-            <div class="filter-header">
-                <span>Categoría</span>
-                <i class="fas fa-chevron-up"></i>
-            </div>
-            
-            <form class="filter-options">
-                <label class="checkbox-container">Papelería
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                </label>
-                <label class="checkbox-container">Dispensadores
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                </label>
-                <label class="checkbox-container">Artículos de Aseo
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                </label>
-                <label class="checkbox-container">Químicos de Limpieza
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                </label>
-                </form>
-        </div>
-    </aside>
+    <h2 class="section-title">Nuestros Productos</h2>
+    <p class="section-subtitle">Descubre los mejores precios en higiene y limpieza industrial</p>
 
-    <section class="product-grid-section">
-        <div class="product-grid">
-            {% for producto in productos %}
-            <div class="product-card">
-                <div class="card-image-container">
-                    {% if producto.imagen %}
-                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
-                    {% else %}
-                        <img src="{% static 'img/no-image.png' %}" alt="Sin imagen">
-                    {% endif %}
-                </div>
-                <div class="card-info">
-                    <h3 class="card-title">{{ producto.nombre }}</h3>
-                    <p class="card-category">{{ producto.get_categoria_display }}</p> 
-                    <a href="#" class="btn-ver">Ver</a>
-                </div>
+    <div class="product-grid">
+        {% for producto in productos %}
+        <div class="product-card">
+            <div class="card-image-container">
+                {% if producto.imagen %}
+                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                {% else %}
+                    <img src="{% static 'core/img/no-image.png' %}" alt="Sin imagen">
+                {% endif %}
             </div>
-            {% empty %}
-            <p>No hay productos disponibles por el momento.</p>
-            {% endfor %}
+            <div class="card-info">
+                <h3 class="card-title">{{ producto.nombre }}</h3>
+                <p class="card-category">{{ producto.get_categoria_display }}</p>
+                <p class="precio">{{ producto.precio|clp }}</p>
+                <!--<a href="#" class="btn-ver-detalle">Ver Detalle</a>-->
+            </div>
         </div>
+        {% empty %}
+        <p>No hay productos destacados por el momento.</p>
+        {% endfor %}
+    </div>
 
-        <div class="load-more-container">
-            <button class="btn-ver-mas">VER MÁS</button>
-        </div>
-    </section>
+    <div class="cta-container">
+        <a href="{% url 'catalogo_productos' %}" class="btn-catalogo-grande">
+            VER CATÁLOGO COMPLETO <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
 
 </div>
 {% endblock %}
