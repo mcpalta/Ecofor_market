@@ -52,6 +52,17 @@ main {
     font-size: 0.85rem;
 }
 
+.navbar-logo a {
+    text-decoration: none; /* Quita el subrayado */
+    color: inherit;
+    font-weight: bold;
+    display: block;
+}
+
+.navbar-logo a:hover {
+    opacity: 0.8;
+}
+
 /* ===== Contenedor principal ===== */
 .container {
     max-width: 1100px;

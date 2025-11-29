@@ -1,0 +1,73 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="hero-section">
+    </section>
+
+<div class="main-container">
+    
+    <aside class="sidebar">
+        <h3 class="sidebar-title"></h3>
+        
+        <div class="filter-group">
+            <h4>FILTROS</h4>
+            <div class="filter-header">
+                <span>Categoría</span>
+                <i class="fas fa-chevron-up"></i>
+            </div>
+            
+            <form class="filter-options">
+                <label class="checkbox-container">Papelería
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                </label>
+                <label class="checkbox-container">Dispensadores
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                </label>
+                <label class="checkbox-container">Artículos de Aseo
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                </label>
+                <label class="checkbox-container">Químicos de Limpieza
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                </label>
+                </form>
+        </div>
+    </aside>
+
+    <section class="product-grid-section">
+        <div class="product-grid">
+            {% for producto in productos %}
+            <div class="product-card">
+                <div class="card-image-container">
+                    {% if producto.imagen %}
+                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                    {% else %}
+                        <img src="{% static 'img/no-image.png' %}" alt="Sin imagen">
+                    {% endif %}
+                </div>
+                <div class="card-info">
+                    <h3 class="card-title">{{ producto.nombre }}</h3>
+                    <p class="card-category">{{ producto.get_categoria_display }}</p> 
+                    <a href="#" class="btn-ver">Ver</a>
+                </div>
+            </div>
+            {% empty %}
+            <p>No hay productos disponibles por el momento.</p>
+            {% endfor %}
+        </div>
+
+        <div class="load-more-container">
+            <button class="btn-ver-mas">VER MÁS</button>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

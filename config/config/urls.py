@@ -4,10 +4,11 @@ from django.contrib.auth import views as auth_views
 from usuarios.views import logout_view
 from django.conf import settings
 from django.conf.urls.static import static
+from core.views import home
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-
+    path('', home, name='home'),
     path(
         "login/",
         auth_views.LoginView.as_view(template_name="usuarios/login.html"),
@@ -18,8 +19,8 @@ urlpatterns = [
 
     path("usuarios/", include("usuarios.urls")),
     path("productos/", include("productos.urls")),
-    path("", include("core.urls")),
-        path(
+    #path("", include("core.urls")),
+    path(
         "password_reset/",
         auth_views.PasswordResetView.as_view(
             template_name="usuarios/password_reset.html"
