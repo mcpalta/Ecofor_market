@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <title>{% block title %}Ecofor Market{% endblock %}</title>
+    {% block extra_css %}{% endblock %}
     <link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
 </head>
 <body>
@@ -12,7 +13,7 @@
     <header>
         <nav class="navbar">
             <div class="navbar-logo">
-                ECOFOR MARKET
+                <a href="{% url 'home' %}">ECOFOR MARKET</a>
             </div>
             <div class="navbar-nav">
                 <a href="{% url 'catalogo_productos' %}">Catálogo</a>

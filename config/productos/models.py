@@ -4,33 +4,58 @@ from django.conf import settings
 
 class Producto(models.Model):
     CATEGORIAS = [
-        ("abarrotes", "Abarrotes"),
-        ("bebidas", "Bebidas"),
-        ("aseo", "Aseo"),
-        ("lacteos", "Lácteos"),
-        ("snacks", "Snacks"),
-        ("otros", "Otros"),
+        ("Papelería y Dispensadores", (
+            ("higienicos", "Higiénicos"),
+            ("toallas_papel", "Toallas de papel"),
+            ("servilletas", "Servilletas"),
+            ("panuelos", "Pañuelos"),
+            ("panos", "Paños"),
+            ("sabanillas", "Sabanillas"),
+            ("dispensadores", "Dispensadores"),
+        )),
+        ("Artículos de Aseo", (
+            ("contenedores", "Contenedores"),
+            ("basureros", "Basureros"),
+            ("articulos_limpieza", "Artículos de limpieza"),
+            ("aseo", "Aseo"),
+        )),
+        ("Productos Químicos", (
+            ("pisos", "Pisos"),
+            ("limpiadores", "Limpiadores"),
+            ("desodorante", "Desodorante Ambiental"),
+            ("automotriz", "Automotriz"),
+            ("lavanderia", "Lavandería"),
+        )),
+        ("Seguridad y Horeca", (
+            ("epp", "Elementos de Protección Personal (EPP)"),
+            ("horeca", "HORECA (Hoteles, Restaurantes, Cafeterías)"),
+        )),
     ]
 
     nombre = models.CharField(max_length=100)
-    descripcion = models.TextField(blank=True)
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    descripcion = models.TextField(blank=True, verbose_name="Descripción")
+    precio = models.PositiveIntegerField(verbose_name="Precio")
     stock = models.PositiveIntegerField(default=0)
-    categoria = models.CharField(max_length=20, choices=CATEGORIAS, default="otros")
+    categoria = models.CharField(max_length=50, choices=CATEGORIAS, default="limpiadores")
     activo = models.BooleanField(default=True)
 
-    # 👇 Nuevo campo
     imagen = models.ImageField(
         upload_to="productos/",
         blank=True,
         null=True,
+        verbose_name="Imagen del producto"
     )
 
     creado = models.DateTimeField(auto_now_add=True)
     actualizado = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        verbose_name = "Producto"
+        verbose_name_plural = "Productos"
+        ordering = ["-creado"]
+
     def __str__(self):
-        return f"{self.nombre} ({self.stock} en stock)"
+        return f"{self.nombre} ({self.get_categoria_display()}) - Stock: {self.stock}"
 
 
 class Pedido(models.Model):
@@ -42,8 +67,13 @@ class Pedido(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     creado = models.DateTimeField(auto_now_add=True)
     actualizado = models.DateTimeField(auto_now=True)
-    total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total = models.PositiveIntegerField(default=0)
     estado = models.CharField(max_length=20, choices=ESTADOS, default="pendiente")
+
+    class Meta:
+        verbose_name = "Pedido"
+        verbose_name_plural = "Pedidos"
+        ordering = ["-creado"]
 
     def __str__(self):
         return f"Pedido #{self.id} de {self.usuario.username}"
@@ -53,7 +83,7 @@ class PedidoItem(models.Model):
     pedido = models.ForeignKey(Pedido, related_name="items", on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.PROTECT)
     cantidad = models.PositiveIntegerField()
-    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    precio_unitario = models.PositiveIntegerField()
 
     def subtotal(self):
         return self.cantidad * self.precio_unitario

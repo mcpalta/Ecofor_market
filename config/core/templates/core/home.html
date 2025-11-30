@@ -1,0 +1,50 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load formatos %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/css/home.css' %}">
+{% endblock %}
+
+
+ {% block title %}Inicio - Ecofor Market{% endblock %}
+
+{% block content %}
+
+<section class="hero-section">
+    </section>
+
+<div class="home-container">
+    
+    <h2 class="section-title">Nuestros Productos</h2>
+    <p class="section-subtitle">Descubre los mejores precios en higiene y limpieza industrial</p>
+
+    <div class="product-grid">
+        {% for producto in productos %}
+        <div class="product-card">
+            <div class="card-image-container">
+                {% if producto.imagen %}
+                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                {% else %}
+                    <img src="{% static 'core/img/no-image.png' %}" alt="Sin imagen">
+                {% endif %}
+            </div>
+            <div class="card-info">
+                <h3 class="card-title">{{ producto.nombre }}</h3>
+                <p class="card-category">{{ producto.get_categoria_display }}</p>
+                <p class="precio">{{ producto.precio|clp }}</p>
+                <!--<a href="#" class="btn-ver-detalle">Ver Detalle</a>-->
+            </div>
+        </div>
+        {% empty %}
+        <p>No hay productos destacados por el momento.</p>
+        {% endfor %}
+    </div>
+
+    <div class="cta-container">
+        <a href="{% url 'catalogo_productos' %}" class="btn-catalogo-grande">
+            VER CATÁLOGO COMPLETO <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+</div>
+{% endblock %}

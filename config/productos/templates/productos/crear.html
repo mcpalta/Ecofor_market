@@ -33,13 +33,36 @@
 
       <div class="form-group">
         <label class="form-label">Categoría:</label>
-        <select name="categoria">
-          <option value="abarrotes">Abarrotes</option>
-          <option value="bebidas">Bebidas</option>
-          <option value="aseo">Aseo</option>
-          <option value="lacteos">Lácteos</option>
-          <option value="snacks">Snacks</option>
-          <option value="otros">Otros</option>
+        <select name="categoria" required>
+            <optgroup label="Papelería y Dispensadores">
+                <option value="higienicos">Higiénicos</option>
+                <option value="toallas_papel">Toallas de papel</option>
+                <option value="servilletas">Servilletas</option>
+                <option value="panuelos">Pañuelos</option>
+                <option value="panos">Paños</option>
+                <option value="sabanillas">Sabanillas</option>
+                <option value="dispensadores">Dispensadores</option>
+            </optgroup>
+
+            <optgroup label="Artículos de Aseo">
+                <option value="contenedores">Contenedores</option>
+                <option value="basureros">Basureros</option>
+                <option value="articulos_limpieza">Artículos de limpieza</option>
+                <option value="aseo">Aseo</option>
+            </optgroup>
+
+            <optgroup label="Productos Químicos">
+                <option value="pisos">Pisos</option>
+                <option value="limpiadores" selected>Limpiadores</option>
+                <option value="desodorante">Desodorante Ambiental</option>
+                <option value="automotriz">Automotriz</option>
+                <option value="lavanderia">Lavandería</option>
+            </optgroup>
+
+            <optgroup label="Seguridad y Horeca">
+                <option value="epp">Elementos de Protección Personal (EPP)</option>
+                <option value="horeca">HORECA</option>
+            </optgroup>
         </select>
       </div>
 
@@ -55,6 +78,10 @@
         <small class="form-help">Puedes subir una imagen en formato JPG, PNG o WEBP.</small>
       </div>
 
+      <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: 15px;">
+        <input type="checkbox" name="activo" id="id_activo" checked style="width: 20px; height: 20px;">
+        <label for="id_activo" class="form-label" style="margin-bottom: 0;">¿Visible en el catálogo?</label>
+      </div>
 
       <div class="form-actions">
         <a href="{% url 'listar_productos' %}" class="btn btn-secondary">Cancelar</a>

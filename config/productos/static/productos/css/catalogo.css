@@ -1,0 +1,141 @@
+:root {
+    --ecofor-green: #0B3B2E;
+    --ecofor-gold: #F0E6C0;
+    --text-dark: #333;
+    --card-border: #2F5C50;
+}
+
+/* --- LAYOUT DEL CATÁLOGO --- */
+.catalogo-wrapper {
+    max-width: 1300px;
+    margin: 40px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+/* --- SIDEBAR DE FILTROS --- */
+.catalogo-sidebar {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+
+    position: sticky;
+    top: 20px; 
+}
+
+.sidebar-header {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: var(--ecofor-green);
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.cat-group {
+    margin-bottom: 20px;
+}
+
+.cat-group-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 10px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.cat-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cat-link {
+    display: block;
+    padding: 8px 10px;
+    color: var(--text-dark);
+    text-decoration: none;
+    font-size: 0.95rem;
+    border-radius: 5px;
+    transition: background 0.2s;
+}
+
+.cat-link:hover {
+    background-color: #e9ecef;
+    color: var(--ecofor-green);
+}
+
+/* Categoría seleccionada */
+.cat-link.active {
+    background-color: var(--ecofor-green);
+    color: white;
+    font-weight: bold;
+}
+
+/* --- AJUSTES DEL CONTENIDO PRINCIPAL --- */
+.search-bar-mini {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.search-bar-mini form {
+    display: flex;
+    gap: 10px;
+}
+
+.search-bar-mini input {
+    padding: 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+}
+
+.btn-add {
+    width: 100%;
+    margin-top: 10px;
+    background-color: #EEEae0;
+    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-add:hover {
+    background-color: var(--ecofor-gold);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .catalogo-wrapper {
+        grid-template-columns: 1fr;
+    }
+    
+    .catalogo-sidebar {
+        position: relative;
+        margin-bottom: 30px;
+    }
+}
+
+
+/* ===== Grid de productos ===== */
+.catalogo-main .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr) !important; 
+    gap: 30px;
+}
+
+@media (max-width: 1100px) {
+    .catalogo-main .product-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .catalogo-main .product-grid {
+        grid-template-columns: 1fr !important;
+    }
+}

@@ -33,13 +33,38 @@
 
       <div class="form-group">
         <label class="form-label">Categoría:</label>
-        <select name="categoria">
-          <option value="abarrotes" {% if producto.categoria == "abarrotes" %}selected{% endif %}>Abarrotes</option>
-          <option value="bebidas" {% if producto.categoria == "bebidas" %}selected{% endif %}>Bebidas</option>
-          <option value="aseo" {% if producto.categoria == "aseo" %}selected{% endif %}>Aseo</option>
-          <option value="lacteos" {% if producto.categoria == "lacteos" %}selected{% endif %}>Lácteos</option>
-          <option value="snacks" {% if producto.categoria == "snacks" %}selected{% endif %}>Snacks</option>
-          <option value="otros" {% if producto.categoria == "otros" %}selected{% endif %}>Otros</option>
+        <select name="categoria" required>
+            
+            <optgroup label="Papelería y Dispensadores">
+                <option value="higienicos" {% if producto.categoria == 'higienicos' %}selected{% endif %}>Higiénicos</option>
+                <option value="toallas_papel" {% if producto.categoria == 'toallas_papel' %}selected{% endif %}>Toallas de papel</option>
+                <option value="servilletas" {% if producto.categoria == 'servilletas' %}selected{% endif %}>Servilletas</option>
+                <option value="panuelos" {% if producto.categoria == 'panuelos' %}selected{% endif %}>Pañuelos</option>
+                <option value="panos" {% if producto.categoria == 'panos' %}selected{% endif %}>Paños</option>
+                <option value="sabanillas" {% if producto.categoria == 'sabanillas' %}selected{% endif %}>Sabanillas</option>
+                <option value="dispensadores" {% if producto.categoria == 'dispensadores' %}selected{% endif %}>Dispensadores</option>
+            </optgroup>
+
+            <optgroup label="Artículos de Aseo">
+                <option value="contenedores" {% if producto.categoria == 'contenedores' %}selected{% endif %}>Contenedores</option>
+                <option value="basureros" {% if producto.categoria == 'basureros' %}selected{% endif %}>Basureros</option>
+                <option value="articulos_limpieza" {% if producto.categoria == 'articulos_limpieza' %}selected{% endif %}>Artículos de limpieza</option>
+                <option value="aseo" {% if producto.categoria == 'aseo' %}selected{% endif %}>Aseo</option>
+            </optgroup>
+
+            <optgroup label="Productos Químicos">
+                <option value="pisos" {% if producto.categoria == 'pisos' %}selected{% endif %}>Cuidado de Pisos</option>
+                <option value="limpiadores" {% if producto.categoria == 'limpiadores' %}selected{% endif %}>Limpiadores Generales</option>
+                <option value="desodorante" {% if producto.categoria == 'desodorante' %}selected{% endif %}>Desodorante Ambiental</option>
+                <option value="automotriz" {% if producto.categoria == 'automotriz' %}selected{% endif %}>Línea Automotriz</option>
+                <option value="lavanderia" {% if producto.categoria == 'lavanderia' %}selected{% endif %}>Lavandería</option>
+            </optgroup>
+
+            <optgroup label="Seguridad y Horeca">
+                <option value="epp" {% if producto.categoria == 'epp' %}selected{% endif %}>Elementos de Protección Personal (EPP)</option>
+                <option value="horeca" {% if producto.categoria == 'horeca' %}selected{% endif %}>HORECA</option>
+            </optgroup>
+            
         </select>
       </div>
 
@@ -59,6 +84,13 @@
         <label class="form-label">Nueva imagen (opcional):</label>
         <input type="file" name="imagen" accept="image/*">
         <small class="form-help">Si no seleccionas nada, se mantendrá la imagen actual.</small>
+      </div>
+
+      <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: 15px;">
+        <input type="checkbox" name="activo" id="id_activo" 
+               {% if producto.activo %}checked{% endif %} 
+               style="width: 20px; height: 20px;">
+        <label for="id_activo" class="form-label" style="margin-bottom: 0;">¿Visible en el catálogo?</label>
       </div>
 
       <div class="form-actions">

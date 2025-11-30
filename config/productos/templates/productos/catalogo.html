@@ -1,32 +1,102 @@
 {% extends 'core/base.html' %}
+{% load static %}
+{% load formatos %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'productos/css/catalogo.css' %}">
+{% endblock %}
+
 
 {% block title %}Catálogo - Ecofor Market{% endblock %}
 
 {% block content %}
-<div class="container">
-  <h1 style="margin-bottom:1rem;">Catálogo de productos</h1>
+<div class="catalogo-wrapper">
+    
+    <aside class="catalogo-sidebar">
+        <h3 class="sidebar-header">Categorías</h3>
+        
+        <a href="{% url 'catalogo_productos' %}" 
+           class="cat-link {% if not categoria_seleccionada %}active{% endif %}">
+           Ver Todo
+        </a>
 
-  <div class="products-grid">
-    {% for p in productos %}
-      <div class="product-card">
-        {% if p.imagen %}
-          <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}">
+        {% for grupo, opciones in lista_categorias %}
+            <div class="cat-group">
+                <h4 class="cat-group-title">{{ grupo }}</h4>
+                <ul class="cat-list">
+                    {% for slug, nombre in opciones %}
+                    <li>
+                        <a href="?categoria={{ slug }}{% if query %}&buscar={{ query }}{% endif %}" 
+                           class="cat-link {% if categoria_seleccionada == slug %}active{% endif %}">
+                            {{ nombre }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </aside>
+
+
+    <div class="catalogo-main">
+        
+        <div class="search-bar-mini">
+            <form method="get" action="">
+                {% if categoria_seleccionada %}
+                    <input type="hidden" name="categoria" value="{{ categoria_seleccionada }}">
+                {% endif %}
+                
+                <input type="text" name="buscar" placeholder="Buscar..." value="{{ query|default:'' }}">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+
+        <div class="product-grid">
+            {% for producto in page_obj %}
+                <div class="product-card">
+                    <div class="card-image-container">
+                        {% if producto.imagen %}
+                            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                        {% else %}
+                            <img src="{% static 'core/img/no-image.png' %}" alt="Sin imagen">
+                        {% endif %}
+                    </div>
+                    <div class="card-info">
+                        <h3 class="card-title">{{ producto.nombre }}</h3>
+                        <p class="precio">{{ producto.precio|clp }}</p>
+                        <form action="{% url 'agregar_al_carrito' producto.id %}" method="post" style="display: flex; gap: 5px; align-items: center; justify-content: center; margin-top: 10px;">
+                            {% csrf_token %}
+                            
+                            <input type="number" name="cantidad" value="1" min="1" max="{{ producto.stock }}" 
+                                style="width: 60px; padding: 5px; border-radius: 10px; border: 1px solid #ccc; text-align: center;">
+                            
+                            <button type="submit" class="btn-add">
+                                Agregar <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="no-results">
+                    <p>No hay productos en esta categoría.</p>
+                    <a href="{% url 'catalogo_productos' %}">Limpiar filtros</a>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if query %}&buscar={{ query }}{% endif %}{% if categoria_seleccionada %}&categoria={{ categoria_seleccionada }}{% endif %}">&laquo;</a>
+            {% endif %}
+            
+            <span class="current">{{ page_obj.number }}</span>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if query %}&buscar={{ query }}{% endif %}{% if categoria_seleccionada %}&categoria={{ categoria_seleccionada }}{% endif %}">&raquo;</a>
+            {% endif %}
+        </div>
         {% endif %}
-        <div class="product-name">{{ p.nombre }}</div>
-        <div class="product-price">${{ p.precio }}</div>
-        <form method="post" action="{% url 'agregar_al_carrito' p.id %}">
-          {% csrf_token %}
-          <input type="number" name="cantidad" value="1" min="1" max="{{ p.stock }}" class="form-control" style="margin-bottom:0.6rem;">
-          <button type="submit" class="btn btn-primary" style="width:100%;">Agregar al carrito</button>
-        </form>
-      </div>
-    {% empty %}
-      <p>No hay productos disponibles.</p>
-    {% endfor %}
-  </div>
-
-  <div style="margin-top:1.5rem; text-align:center;">
-    <a href="{% url 'ver_carrito' %}" class="btn btn-secondary">Ver carrito</a>
-  </div>
+    </div>
 </div>
 {% endblock %}

@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load formatos %}
 
 {% block content %}
 
@@ -26,8 +27,8 @@
                     <tr>
                         <td>{{ item.producto.nombre }}</td>
                         <td>{{ item.cantidad }}</td>
-                        <td>${{ item.precio_unitario|floatformat:0 }}</td>
-                        <td>${{ item.subtotal|floatformat:0 }}</td>
+                        <td>{{ item.precio_unitario|clp }}</td>
+                        <td>{{ item.subtotal|clp }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -35,7 +36,7 @@
         </div>
 
         <div class="checkout-total">
-            <strong>Total:</strong> ${{ pedido.total|floatformat:0 }}
+            <strong>Total:</strong> {{ pedido.total|clp }}
         </div>
 
         <p class="checkout-note">

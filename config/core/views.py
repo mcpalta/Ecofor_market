@@ -1,6 +1,9 @@
-from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from productos.models import Producto
 
-@login_required
 def home(request):
-    return redirect("dashboard")
+    productos = Producto.objects.filter(activo=True).order_by('-creado')[:6]
+    context = {
+            'productos': productos
+        }
+    return render(request, 'core/home.html', context)
