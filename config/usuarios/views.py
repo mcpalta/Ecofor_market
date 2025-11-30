@@ -1,7 +1,9 @@
+from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+
 
 from .forms import RegistroForm
 from .decoradores import admin_required
@@ -13,6 +15,14 @@ def registrar(request):
             form.save()
             messages.success(request, "Cuenta creada correctamente. Ahora puedes iniciar sesión.")
             return redirect("login")
+        
+        if form.is_valid():
+            usuario = form.save(commit=False)
+            # Seguridad adicional
+            if usuario.tipo_cliente in ("admin", "atencion_cliente"):
+                return HttpResponseForbidden("No puedes asignar ese tipo de usuario.")
+        usuario.save()
+        return redirect("login")
     else:
         form = RegistroForm()
 

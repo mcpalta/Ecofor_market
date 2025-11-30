@@ -19,6 +19,7 @@ urlpatterns = [
 
     path("usuarios/", include("usuarios.urls")),
     path("productos/", include("productos.urls")),
+    path("mensajeria/", include("mensajeria.urls")),
     #path("", include("core.urls")),
     path(
         "password_reset/",

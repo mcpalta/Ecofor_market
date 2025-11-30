@@ -6,7 +6,7 @@
 <div class="dashboard-container">
   <div class="dashboard-card">
 
-    <h1 class="dashboard-title">Dashboard</h1>
+    <h1 class="dashboard-title">Mi Panel</h1>
     <p class="dashboard-welcome">
       Bienvenido, <strong>{{ user.username }}</strong>.
     </p>
@@ -16,7 +16,23 @@
         <span class="badge-admin">Administrador</span>
       {% endif %}
     </p>
-
+    {%if user.es_soporte %}
+      <h2 class="dashboard-section-title">Panel de Atención al Cliente</h2>
+            <div class="dashboard-item">
+              <h3>Buscar Cliente</h3>
+              <a href="{% url 'mensajeria:buscar_cliente' %}" class="btn btn-primary">
+                Buscar cliente y abrir chat
+            </a>
+            </div>
+            <div style="margin-top:1rem;">                                              
+            </div>
+            <div class="dashboard-item">
+              <h3>Generar Cotizacion</h3>
+              <a href="{% url 'mensajeria:buscar_cliente' %}" class="btn btn-primary">
+                Generar cotización para cliente
+            </a>
+            </div>
+        {% endif %}
     {% if user.es_admin %}
       <h2 class="dashboard-section-title">Panel de Administrador</h2>
 
@@ -49,8 +65,15 @@
       <h2 class="dashboard-section-title">Accesos rápidos</h2>
       <div class="dashboard-grid">
         <div class="dashboard-item">
+          <h3>Mensajes / Soporte</h3>
+          <p>Habla con nuestro equipo de atención al cliente en tiempo real.</p>
+          <a href="{% url 'mensajeria:conversaciones' %}" class="btn btn-secondary">
+            Mis mensajes
+            </a>
+        </div>
+        <div class="dashboard-item">
           <h3>Catálogo</h3>
-          <p>Revisa todos los productos disponibles en Ecofor Market.</p>
+          <p>Revisa todos los productos disponibles en Vive Sano.</p>
           <a href="{% url 'catalogo_productos' %}" class="btn btn-primary">
             Ver catálogo
           </a>

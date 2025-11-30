@@ -1,0 +1,52 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<div class="container">
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary"
+
+   style="
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+        color: #000000b3;
+        font-weight: 600;
+        margin-bottom: 1rem;
+   ">
+    ← Volver
+    </a>
+    <div class="card">
+        <div class="title">
+           <h2 class="titulo">Mis Conversaciones</h2>
+        </div>
+
+
+        {% if usuarios %}
+            <ul class="lista">
+                {% for usuario in usuarios %}
+                <li class="item">
+                    <a class="btn btn-fourth" href="{% url 'mensajeria:chat' usuario.id %}">
+                        {{ usuario.username }}
+                        {% if usuario.unread_count > 0 %}
+                            <strong style="color:red;">
+                                ({{ usuario.unread_count }} nuevos)
+                            </strong>
+                        {% endif %}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No tienes conversaciones todavía.</p>
+        {% endif %}
+
+        <div style="margin-top: 20px; text-align:center;">
+            <a href="{% url 'mensajeria:chat_default' %}" class="btn btn-secondary">
+                Hablar con Soporte
+            </a>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

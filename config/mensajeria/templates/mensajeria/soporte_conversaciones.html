@@ -1,0 +1,44 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<div class="container">
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary"
+
+   style="
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+        color: #000000b3;
+        font-weight: 600;
+        margin-bottom: 1rem;
+   ">
+    ← Volver
+    </a>
+    <div class="card">
+
+        <h2 class="titulo">Clientes que solicitaron soporte</h2>
+
+        {% if clientes %}
+        <ul class="lista">
+            {% for cliente in clientes %}
+                <li class="item">
+                    <a class="link" href="{% url 'mensajeria:chat' cliente.id %}">
+                        {{ cliente.username }}
+                        {% if cliente.unread_count > 0 %}
+                            <strong style="color:red;">
+                                ({{ cliente.unread_count }} nuevos)
+                            </strong>
+                        {% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p>No hay mensajes nuevos.</p>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}
