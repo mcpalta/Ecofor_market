@@ -10,7 +10,7 @@ class RegistroForm(UserCreationForm):
         super().__init__(*args, **kwargs)
 
         # Roles que NO se pueden asignar desde el registro público
-        ROLES_PROHIBIDOS = ("admin", "atencion_cliente", "empresa")
+        ROLES_PROHIBIDOS = ("admin", "atencion_cliente")
 
         # Filtrar choices
         self.fields["tipo_cliente"].choices = [

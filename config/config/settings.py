@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'usuarios',
     'productos',
     'mensajeria',
+    'reportes.apps.ReportesConfig',
 ]
 
 MIDDLEWARE = [

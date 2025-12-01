@@ -12,11 +12,13 @@ urlpatterns = [
     path("catalogo/", views.catalogo, name="catalogo_productos"),
 
     # Carrito
+    path("carrito/generar_factura/", views.generar_factura, name="generar_factura"),
     path("carrito/", views.ver_carrito, name="ver_carrito"),
     path("carrito/agregar/<int:id>/", views.agregar_al_carrito, name="agregar_al_carrito"),
     path("restar/<int:id>/", views.restar_del_carrito, name="restar_del_carrito"),
     path("carrito/eliminar/<int:id>/", views.eliminar_del_carrito, name="eliminar_del_carrito"),
     path("carrito/vaciar/", views.vaciar_carrito, name="vaciar_carrito"),
     path("carrito/finalizar/", views.finalizar_compra, name="finalizar_compra"),
+    path("factura/pdf/", views.generar_factura_pdf, name="generar_factura_pdf"),
 
 ]

@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
 
-
 class Producto(models.Model):
     CATEGORIAS = [
         ("Papelería y Dispensadores", (
@@ -38,7 +37,8 @@ class Producto(models.Model):
     stock = models.PositiveIntegerField(default=0)
     categoria = models.CharField(max_length=50, choices=CATEGORIAS, default="limpiadores")
     activo = models.BooleanField(default=True)
-
+    descuento = models.IntegerField(default=0, verbose_name="Descuento (%)")
+    
     imagen = models.ImageField(
         upload_to="productos/",
         blank=True,
@@ -90,3 +90,26 @@ class PedidoItem(models.Model):
 
     def __str__(self):
         return f"{self.cantidad} x {self.producto.nombre}"
+    
+class Factura(models.Model):
+    empresa = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(auto_now_add=True)
+    total_bruto = models.FloatField()
+    total_descuento = models.FloatField()
+    total_sin_iva = models.FloatField()
+    total_final = models.FloatField()
+
+    def __str__(self):
+        return f"Factura #{self.id} - {self.empresa.username}"
+
+
+class FacturaItem(models.Model):
+    factura = models.ForeignKey(Factura, related_name="items", on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=255)
+    cantidad = models.IntegerField()
+    precio_unitario = models.FloatField()
+    descuento_aplicado = models.FloatField()
+    subtotal = models.FloatField()
+
+    def __str__(self):
+        return f"{self.cantidad} x {self.nombre}"

@@ -55,6 +55,9 @@
       <a href="{% url 'catalogo_productos' %}" class="btn btn-secondary">Seguir comprando</a>
       <a href="{% url 'vaciar_carrito' %}" class="btn btn-secondary">Vaciar carrito</a>
       <a href="{% url 'finalizar_compra' %}" class="btn btn-primary">Finalizar compra (simulada)</a>
+      {% if user.es_empresa %}
+        <a href="{% url 'generar_factura' %}" class="btn btn-primary">Generar generar_factura</a>
+      {% endif %}
     </div>
   {% else %}
     <p>Tu carrito está vacío.</p>

@@ -1,0 +1,52 @@
+
+{% extends 'core/base.html' %}
+{% block title %}Reportes del Sistema - Ecofor Market{% endblock %}
+{% load static %}
+
+{% block content %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
+{% endblock %}
+
+<div class="container py-4">
+    <h2 class="mb-4 text-center">Reportes del Sistema</h2>
+    <div style="margin-bottom: 2rem;"></div>
+    {% if reportes %}
+        <div class="table-responsive shadow rounded">
+            <table class="table table-hover tabla-reportes">
+                <thead>
+                    <tr>
+                        <th>Tipo de Evento</th>
+                        <th>Producto</th>
+                        <th>Descripción</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for reporte in reportes %}
+                    <tr>
+                        <td>
+                            {% if reporte.tipo == 'STOCK' %}
+                                <span class="badge badge-stock">Cambio de Stock</span>
+                            {% elif reporte.tipo == 'DESCUENTO' %}
+                                <span class="badge badge-descuento">Descuento</span>
+                            {% endif %}
+                        </td>
+
+                        <td>{{ reporte.producto.nombre }}</td>
+                        <td>{{ reporte.descripcion }}</td>
+                        <td>{{ reporte.fecha|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% else %}
+        <div class="alert alert-info text-center">
+            No hay reportes registrados aún.
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

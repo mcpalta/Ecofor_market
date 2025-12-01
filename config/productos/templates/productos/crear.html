@@ -5,7 +5,20 @@
 {% block content %}
 <div class="admin-page-container">
   <div class="admin-card form-card">
+      <a href="{% url 'listar_productos' %}" class="btn btn-secondary"
 
+      style="
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: #000000b3;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            background-color: aliceblue;
+      ">
+    ← Volver
+    </a>
     <h1 class="admin-title">Crear producto</h1>
     <p class="admin-subtitle">
       Completa la información del nuevo producto para agregarlo al catálogo.
@@ -15,18 +28,18 @@
       {% csrf_token %}
 
       <div class="form-group">
-        <label class="form-label">Nombre:</label>
+        <label class="form-label-crear">Nombre:</label>
         <input type="text" name="nombre" required>
       </div>
 
       <div class="form-group">
-        <label class="form-label">Precio:</label>
+        <label class="form-label-crear">Precio:</label>
         <input type="number" name="precio" step="0.01" required>
         <small class="form-help">Ingresa el precio en pesos chilenos.</small>
       </div>
 
       <div class="form-group">
-        <label class="form-label">Stock:</label>
+        <label class="form-label-crear">Stock:</label>
         <input type="number" name="stock" required>
         <small class="form-help">Cantidad disponible en bodega.</small>
       </div>
@@ -67,20 +80,20 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">Descripción:</label>
+        <label class="form-label-crear">Descripción:</label>
         <textarea name="descripcion"></textarea>
         <small class="form-help">Puedes detallar formato, marca, presentación, etc.</small>
       </div>
 
       <div class="form-group">
-        <label class="form-label">Imagen del producto (opcional):</label>
+        <label class="form-label-crear">Imagen del producto (opcional):</label>
         <input type="file" name="imagen" accept="image/*">
         <small class="form-help">Puedes subir una imagen en formato JPG, PNG o WEBP.</small>
       </div>
 
       <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: 15px;">
         <input type="checkbox" name="activo" id="id_activo" checked style="width: 20px; height: 20px;">
-        <label for="id_activo" class="form-label" style="margin-bottom: 0;">¿Visible en el catálogo?</label>
+        <label for="id_activo" class="form-label-crear" style="margin-bottom: 0;">¿Visible en el catálogo?</label>
       </div>
 
       <div class="form-actions">
