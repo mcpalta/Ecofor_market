@@ -19,6 +19,7 @@ from reportlab.lib import colors
 from django.conf import settings
 from .descuentos import calcular_total_empresa, descuento_por_cantidad_empresa
 from .models import Factura, FacturaItem
+from decimal import Decimal
 
 # ---------------------------------------------------------
 # ZONA ADMIN
@@ -433,6 +434,8 @@ def solicitar_cotizacion(request, pedido):
     messages.success(request, "Tu solicitud de cotizacion fue enviada al equipo de atención al cliente.")
     return redirect("mensajeria:chat", user_id=soporte.id)
 
+
+
 @login_required
 def crear_pedido_cotizacion(request):
     carrito = Carrito(request)
@@ -443,39 +446,37 @@ def crear_pedido_cotizacion(request):
     pedido = Pedido.objects.create(
         usuario=request.user,
         total=0,
-        estado="cotizacion"
+        estado="pendiente"   # cotización = pendiente en tu modelo
     )
 
-    total_final = 0
+    total_final = Decimal("0.00")
 
     for item in carrito:
         producto = item["producto"]
         cantidad = item["cantidad"]
-        precio = int(item["precio"])
+        precio_unitario = item["precio"]  # sigue siendo int
 
         if cantidad > producto.stock:
             cantidad = producto.stock
-
         if cantidad <= 0:
             continue
 
-        # Crear item del pedido
+        # total final del item con descuento y sin IVA
+        total_item = calcular_total_empresa(Decimal(precio_unitario), Decimal(cantidad))
+        total_final += total_item
+
         PedidoItem.objects.create(
             pedido=pedido,
             producto=producto,
             cantidad=cantidad,
-            precio_unitario=precio
+            precio_unitario=precio_unitario
         )
 
-        # SUMAR SUBTOTAL DEL ITEM
-        total_final += precio * cantidad
-
-    # ACTUALIZAR TOTAL DEL PEDIDO
-    pedido.total = total_final
+    pedido.total = float(total_final)
     pedido.save()
 
-    return redirect("ver_carrito_con_pedido", pedido_id=pedido.id)
 
+    return redirect("ver_carrito_con_pedido", pedido_id=pedido.id)
 
 @login_required
 def buscar_cotizacion(request):
@@ -489,8 +490,8 @@ def buscar_cotizacion(request):
             pedido_id = request.GET.get("id")
             pedido = Pedido.objects.filter(id=pedido_id).first()
 
-        if not pedido:
-            messages.error(request, "No existe ninguna cotización con ese ID.")
+            if not pedido.exsists():
+                messages.error(request, "No existe ninguna cotización con ese ID.")
 
     except:
         messages.error(request, f"Error al buscar la cotización: {e}")
@@ -516,11 +517,6 @@ def generar_cotizacion_pdf(request, pedido_id):
     pedido = get_object_or_404(Pedido, id=pedido_id)
     items = PedidoItem.objects.filter(pedido=pedido)
 
-    # Calcular totales
-    total_bruto = 0
-    for item in items:
-        total_bruto += item.precio_unitario * item.cantidad
-
     # Crear PDF
     response = HttpResponse(content_type="application/pdf")
     response["Content-Disposition"] = f"inline; filename=cotizacion_{pedido.id}.pdf"
@@ -535,10 +531,12 @@ def generar_cotizacion_pdf(request, pedido_id):
     elements.append(Paragraph(f"Cotización Nº: {pedido.id}", styles["Normal"]))
     elements.append(Spacer(1, 0.5*cm))
 
-    # Tabla de items
+    # Tabla de items y total corregido
     table_data = [["Producto", "Cantidad", "Precio Unit.", "Subtotal"]]
+    total_bruto = Decimal("0.00")
     for item in items:
-        subtotal = item.precio_unitario * item.cantidad
+        subtotal = calcular_total_empresa(Decimal(item.precio_unitario), item.cantidad)
+        total_bruto += subtotal
         table_data.append([
             item.producto.nombre,
             item.cantidad,
@@ -558,6 +556,7 @@ def generar_cotizacion_pdf(request, pedido_id):
 
     doc.build(elements)
     return response
+
 
 @login_required
 def ingresar_id_pago(request):

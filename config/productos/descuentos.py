@@ -1,33 +1,35 @@
-from decimal import Decimal
+from decimal import Decimal, ROUND_DOWN
 
 def descuento_por_cantidad_empresa(cantidad):
     """
-    Retorna el porcentaje de descuento para clientes empresa
-    según la cantidad total de un producto.
+    Devuelve porcentaje de descuento según cantidad.
     """
     if cantidad >= 500:
-        return 0.12  # 12 %
+        return Decimal("0.12")
     elif cantidad >= 100:
-        return 0.07  # 7 %
-    return 0.00      # sin descuento
-
+        return Decimal("0.07")
+    return Decimal("0.00")
 
 def calcular_total_empresa(precio_unitario, cantidad):
     """
-    Calcula el total para empresas:
-    - Remueve el IVA (19%)
+    Calcula total de un ítem para empresas:
+    - Quita IVA (19%)
     - Aplica descuento por cantidad
     """
-    # Remover IVA (precio venía con IVA incluido)
-    precio_sin_iva = precio_unitario / 1.19
+    iva = Decimal("1.19")
+    precio_unitario = Decimal(precio_unitario)
+    cantidad = Decimal(cantidad)
 
-    # Obtener porcentaje de descuento
+    # Precio sin IVA
+    precio_sin_iva = (precio_unitario / iva).quantize(Decimal("0.01"), rounding=ROUND_DOWN)
+
+    # Porcentaje de descuento
     descuento_pct = descuento_por_cantidad_empresa(cantidad)
 
-    # Aplicar descuento sobre el valor sin IVA
-    precio_con_descuento = precio_sin_iva * (1 - descuento_pct)
+    # Precio con descuento
+    precio_con_descuento = (precio_sin_iva * (Decimal("1.0") - descuento_pct)).quantize(Decimal("0.01"), rounding=ROUND_DOWN)
 
-    # Calcular el total final
-    total = precio_con_descuento * cantidad
+    # Total del ítem
+    total = (precio_con_descuento * cantidad).quantize(Decimal("0.01"), rounding=ROUND_DOWN)
 
-    return round(total, 2)
+    return total
