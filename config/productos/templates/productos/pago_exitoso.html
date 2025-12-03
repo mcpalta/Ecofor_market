@@ -3,8 +3,25 @@
 {% block title %}Dashboard - Ecofor Market{% endblock %}
 
 {% block content %}
+      <a href="{% url 'dashboard' %}" class="btn btn-secondary"
 
-<h2>Pago realizado exitosamente</h2>
-<p>Pedido #{{ pedido.id }} Ha sido Pagado!!!.</p>
+      style="
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: #000000b3;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            background-color: aliceblue;
+      ">
+    ← Volver
+    </a>
+<div class="container" style="border: 1cm solid rgb(6, 65, 6); background-color: aliceblue;">
+    <h2>Pago realizado exitosamente</h2>
+    <p>Pedido #{{ pedido.id }} Ha sido Pagado!!!.</p>
+
+</div>
+
 
 {% endblock %}

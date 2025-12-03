@@ -3,33 +3,56 @@
 {% block title %}Dashboard - Ecofor Market{% endblock %}
 
 {% block content %}
-<h2>Cotización #{{ pedido.id }}</h2>
 
-<p><b>Cliente:</b> {{ pedido.usuario.username }}</p>
-<p><b>Total estimado:</b> ${{ pedido.total }}</p>
-<hr>
+      <a href="{% url 'dashboard' %}" class="btn btn-secondary"
 
-<table class="table table-bordered">
-    <thead>
+      style="
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: #000000b3;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            background-color: aliceblue;
+      ">
+    ← Volver
+    </a>
+<div class="container: center; " style="
+    border: 1cm solid #0b3b2a;
+    padding: 20px;
+    background-color: rgb(247, 251, 254);
+    margin-top: 20px;">
+
+    <h2>Cotización #{{ pedido.id }}</h2>
+
+    <p><b>Cliente:</b> {{ pedido.usuario.username }}</p>
+    <p><b>Total estimado:</b> ${{ pedido.total }}</p>
+    <div style="margin-bottom: 20px;"></div>
+    <hr>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cant.</th>
+                <th>Precio unit.</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+
+        {% for item in items %}
         <tr>
-            <th>Producto</th>
-            <th>Cant.</th>
-            <th>Precio unit.</th>
-            <th>Total</th>
+            <td>{{ item.producto.nombre }}</td>
+            <td>{{ item.cantidad }}</td>
+            <td>${{ item.precio_unitario }}</td>
+            <td>${{ item.cantidad|floatformat:0|add:item.precio_unitario }}</td>
         </tr>
-    </thead>
-
-    {% for item in items %}
-    <tr>
-        <td>{{ item.producto.nombre }}</td>
-        <td>{{ item.cantidad }}</td>
-        <td>${{ item.precio_unitario }}</td>
-        <td>${{ item.cantidad|floatformat:0|add:item.precio_unitario }}</td>
-    </tr>
-    {% endfor %}
-</table>
-
-<a href="{% url 'generar_cotizacion_pdf' pedido.id %}" class="btn btn-primary">
-    Descargar PDF
-</a>
+        {% endfor %}
+    </table>
+    <div style="margin-top: 20px;"></div>
+    <a href="{% url 'generar_cotizacion_pdf' pedido.id %}" class="btn btn-primary">
+        Descargar PDF
+    </a>
+</div>
 {% endblock %}

@@ -3,11 +3,41 @@
 {% block title %}Dashboard - Ecofor Market{% endblock %}
 
 {% block content %}
+      <a href="{% url 'dashboard' %}" class="btn btn-secondary"
 
-<h2>Pago del pedido #{{ pedido.id }}</h2>
-<p>Total a pagar: <b>${{ pedido.total }}</b></p>
+      style="
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: #000000b3;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            background-color: aliceblue;
+            border-radius: 2px black;
+      ">
+    ← Volver
+    </a>
+<div style="
+    text-align: center;
+    border: 1cm solid #0b3b2a;
+    padding: 20px;
+    background-color: rgb(247, 251, 254);
+    margin-top: 20px;
+">
 
-<a href="{% url 'confirmar_pago' pedido.id %}">
-    <button>Realizar pago</button>
-</a>
+    <h1>Pago del pedido #{{ pedido.id }}</h1>
+    <h2>Total a pagar: <b>${{ pedido.total }}</b></h2>
+
+    <div style="margin-bottom: 20px; margin-top: 20px;">
+        <p>Por favor, haga clic en el botón de abajo para realizar su pago.</p>
+    </div>
+
+    <a href="{% url 'confirmar_pago' pedido.id %}">
+        <button style="font-weight: bolder; color: black; font-size: 1.5rem; border-radius: 1px;" class="submit-button">
+            Realizar pago
+        </button>
+    </a>
+</div>
+
 {% endblock %}

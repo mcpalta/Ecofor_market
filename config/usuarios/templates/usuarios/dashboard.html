@@ -34,7 +34,10 @@
             </div>
 
         {%elif user.es_empresa %}
+      <h2 class="dashboard-section-title">Panel de Empresa</h2>
+      <div class="dashboard-item">
             <a href="{% url 'ingresar_id_pago' %}" class="btn btn-primary">Realizar Pago cotización</a>
+      </div>
       {% endif %}
     {% if user.es_admin %}
       <h2 class="dashboard-section-title">Panel de Administrador</h2>
