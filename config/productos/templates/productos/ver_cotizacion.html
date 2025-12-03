@@ -1,0 +1,35 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Dashboard - Ecofor Market{% endblock %}
+
+{% block content %}
+<h2>Cotización #{{ pedido.id }}</h2>
+
+<p><b>Cliente:</b> {{ pedido.usuario.username }}</p>
+<p><b>Total estimado:</b> ${{ pedido.total }}</p>
+<hr>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Cant.</th>
+            <th>Precio unit.</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+
+    {% for item in items %}
+    <tr>
+        <td>{{ item.producto.nombre }}</td>
+        <td>{{ item.cantidad }}</td>
+        <td>${{ item.precio_unitario }}</td>
+        <td>${{ item.cantidad|floatformat:0|add:item.precio_unitario }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="{% url 'generar_cotizacion_pdf' pedido.id %}" class="btn btn-primary">
+    Descargar PDF
+</a>
+{% endblock %}

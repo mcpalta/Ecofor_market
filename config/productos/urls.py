@@ -20,5 +20,15 @@ urlpatterns = [
     path("carrito/vaciar/", views.vaciar_carrito, name="vaciar_carrito"),
     path("carrito/finalizar/", views.finalizar_compra, name="finalizar_compra"),
     path("factura/pdf/", views.generar_factura_pdf, name="generar_factura_pdf"),
+    path("solicitar-cotizacion/<int:pedido>/", views.solicitar_cotizacion, name="solicitar_cotizacion"),
+    path("carrito/crear-pedido-cotizacion/", views.crear_pedido_cotizacion, name="crear_pedido_cotizacion"),
+    path("carrito/<int:pedido_id>/", views.ver_carrito, name="ver_carrito_con_pedido"),
+    path("cotizaciones/buscar/", views.buscar_cotizacion, name="buscar_cotizacion"),
+    path("cotizaciones/<int:pedido_id>/", views.ver_cotizacion, name="ver_cotizacion"),
+    path("cotizaciones/pdf/<int:pedido_id>/", views.generar_cotizacion_pdf, name="generar_cotizacion_pdf"),
+    path("pago-ingresar/", views.ingresar_id_pago, name="ingresar_id_pago"),
+    path("pago/<int:pedido_id>/", views.ver_pago, name="ver_pago"),
+    path("pago/<int:pedido_id>/confirmar/", views.confirmar_pago, name="confirmar_pago"),
+
 
 ]

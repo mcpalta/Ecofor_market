@@ -1,0 +1,13 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Dashboard - Ecofor Market{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <label>Ingrese ID del pedido:</label>
+    <input type="number" name="pedido_id" required>
+    <button type="submit">Buscar pedido</button>
+</form>
+
+{% endblock %}

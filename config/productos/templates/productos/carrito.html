@@ -57,6 +57,15 @@
       <a href="{% url 'finalizar_compra' %}" class="btn btn-primary">Finalizar compra (simulada)</a>
       {% if user.es_empresa %}
         <a href="{% url 'generar_factura' %}" class="btn btn-primary">Generar generar_factura</a>
+        <a href="{% url 'crear_pedido_cotizacion' %}" class="btn btn-secondary">
+            Crear pedido para cotización
+        </a>
+        {% if pedido %}
+            <a href="{% url 'solicitar_cotizacion' pedido=pedido.id %}" class="btn btn-primary">
+                Solicitar cotización
+            </a>
+        {% endif %}
+
       {% endif %}
     </div>
   {% else %}

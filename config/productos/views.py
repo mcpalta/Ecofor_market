@@ -5,7 +5,8 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from mensajeria.models import Message
 from usuarios.decoradores import admin_required
-from .models import Producto, Pedido, PedidoItem
+from usuarios.models import Usuario
+from .models import PagoSimulado, Producto, Pedido, PedidoItem
 from .forms import ProductoForm
 from .carrito import Carrito
 from .pdf_factura import generar_pdf_factura
@@ -122,10 +123,23 @@ def agregar_al_carrito(request, id):
     carrito.add(producto, cantidad)
     return redirect("ver_carrito")
 
+
+#def ver_carrito(request):
+    #carrito = Carrito(request)
+    #return render(request, "productos/carrito.html", {"carrito": carrito})
 @login_required
-def ver_carrito(request):
+def ver_carrito(request, pedido_id=None):
     carrito = Carrito(request)
-    return render(request, "productos/carrito.html", {"carrito": carrito})
+    pedido = None
+
+    if pedido_id:
+        pedido = Pedido.objects.get(id=pedido_id)
+
+    return render(request, "productos/carrito.html", {
+        "carrito": carrito,
+        "pedido": pedido
+    })
+
 
 @login_required
 def eliminar_del_carrito(request, id):
@@ -154,7 +168,7 @@ def finalizar_compra(request):
         total=0,
         estado="pagado"
     )
-
+    nuevo_num = pedido.id  # Usar ID del pedido como número de pedido
     total_bruto = 0
     total_descuento = 0
     total_final = 0
@@ -321,10 +335,6 @@ def generar_factura_pdf(request):
             "subtotal": total_item_final,
         })
 
-        # Actualizar stock y guardar
-        producto.stock -= cantidad
-        producto.save()
-
     # Crear la factura en BD
     factura = Factura.objects.create(
         empresa=user,
@@ -395,3 +405,198 @@ def generar_factura_pdf(request):
 
     doc.build(elements)
     return response
+
+@login_required
+def solicitar_cotizacion(request, pedido):
+    pedido = get_object_or_404(Pedido, id=pedido, usuario=request.user)
+    # Buscar un usuario del tipo "atencion" de forma aleatoria
+    soporte = Usuario.objects.filter(tipo_cliente="atencion_cliente").order_by('?').first()
+
+    if not soporte:
+        messages.error(request, "No existe ningún usuario de atención al cliente.")
+        return redirect("mis_pedidos")
+
+    contenido = (
+        "📌 **Solicitud de cotización**\n\n"
+        f"Usuario: {request.user.username}\n"
+        f"Pedido ID: {pedido.id}\n"
+        f"Total estimado: ${pedido.total}\n\n"
+        "Solicitud enviada automáticamente al equipo de atención al cliente."
+    )
+
+    Message.objects.create(
+        sender=request.user,
+        receiver=soporte,
+        content=contenido
+    )
+
+    messages.success(request, "Tu solicitud de cotizacion fue enviada al equipo de atención al cliente.")
+    return redirect("mensajeria:chat", user_id=soporte.id)
+
+@login_required
+def crear_pedido_cotizacion(request):
+    carrito = Carrito(request)
+
+    if not carrito.cart:
+        return redirect("ver_carrito")
+
+    pedido = Pedido.objects.create(
+        usuario=request.user,
+        total=0,
+        estado="cotizacion"
+    )
+
+    total_final = 0
+
+    for item in carrito:
+        producto = item["producto"]
+        cantidad = item["cantidad"]
+        precio = int(item["precio"])
+
+        if cantidad > producto.stock:
+            cantidad = producto.stock
+
+        if cantidad <= 0:
+            continue
+
+        # Crear item del pedido
+        PedidoItem.objects.create(
+            pedido=pedido,
+            producto=producto,
+            cantidad=cantidad,
+            precio_unitario=precio
+        )
+
+        # SUMAR SUBTOTAL DEL ITEM
+        total_final += precio * cantidad
+
+    # ACTUALIZAR TOTAL DEL PEDIDO
+    pedido.total = total_final
+    pedido.save()
+
+    return redirect("ver_carrito_con_pedido", pedido_id=pedido.id)
+
+
+@login_required
+def buscar_cotizacion(request):
+    if not request.user.tipo_cliente == "atencion_cliente":
+        messages.error(request, "No tienes permiso para acceder a esta sección.")
+        return redirect("home")
+
+    pedido = None
+    try:
+        if request.method == "GET" and "id" in request.GET:
+            pedido_id = request.GET.get("id")
+            pedido = Pedido.objects.filter(id=pedido_id).first()
+
+        if not pedido:
+            messages.error(request, "No existe ninguna cotización con ese ID.")
+
+    except:
+        messages.error(request, f"Error al buscar la cotización: {e}")
+
+    return render(request, "productos/buscar_cotizacion.html", {"pedido": pedido})
+
+@login_required
+def ver_cotizacion(request, pedido_id):
+    if not request.user.tipo_cliente == "atencion_cliente":
+        messages.error(request, "No tienes permiso para acceder a esta sección.")
+        return redirect("home")
+
+    pedido = get_object_or_404(Pedido, id=pedido_id)
+    items = PedidoItem.objects.filter(pedido=pedido)
+
+    return render(request, "productos/ver_cotizacion.html", {
+        "pedido": pedido,
+        "items": items
+    })
+
+@login_required
+def generar_cotizacion_pdf(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id)
+    items = PedidoItem.objects.filter(pedido=pedido)
+
+    # Calcular totales
+    total_bruto = 0
+    for item in items:
+        total_bruto += item.precio_unitario * item.cantidad
+
+    # Crear PDF
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = f"inline; filename=cotizacion_{pedido.id}.pdf"
+
+    doc = SimpleDocTemplate(response, pagesize=A4)
+    elements = []
+    styles = getSampleStyleSheet()
+
+    elements.append(Paragraph("<b>COTIZACIÓN</b>", styles["Title"]))
+    elements.append(Spacer(1, 0.5*cm))
+    elements.append(Paragraph(f"Cliente: {pedido.usuario.username}", styles["Normal"]))
+    elements.append(Paragraph(f"Cotización Nº: {pedido.id}", styles["Normal"]))
+    elements.append(Spacer(1, 0.5*cm))
+
+    # Tabla de items
+    table_data = [["Producto", "Cantidad", "Precio Unit.", "Subtotal"]]
+    for item in items:
+        subtotal = item.precio_unitario * item.cantidad
+        table_data.append([
+            item.producto.nombre,
+            item.cantidad,
+            f"${item.precio_unitario:.0f}",
+            f"${subtotal:.0f}"
+        ])
+
+    table = Table(table_data, colWidths=[6*cm, 2*cm, 3*cm, 3*cm])
+    table.setStyle(TableStyle([
+        ("GRID", (0,0), (-1,-1), 1, colors.black),
+        ("BACKGROUND", (0,0), (-1,0), colors.lightgrey),
+    ]))
+
+    elements.append(table)
+    elements.append(Spacer(1, 0.7*cm))
+    elements.append(Paragraph(f"<b>Total: ${total_bruto:.0f}</b>", styles["Heading3"]))
+
+    doc.build(elements)
+    return response
+
+@login_required
+def ingresar_id_pago(request):
+    try:
+        if request.method == "POST":
+            pedido_id = request.POST.get("pedido_id")
+            return redirect("ver_pago", pedido_id=pedido_id)
+
+        return render(request, "productos/ingresar_id_pago.html")
+    except Exception as e:
+        messages.error(request, f"Error al procesar la solicitud: {e}")
+        return redirect("catalogo_productos")
+
+@login_required
+def ver_pago(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id, usuario=request.user)
+
+    return render(request, "productos/ver_pago.html", {"pedido": pedido})
+
+@login_required
+def confirmar_pago(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id, usuario=request.user)
+
+    # Evitar pagos repetidos
+    if pedido.estado == "pagado":
+        messages.warning(request, "Este pedido ya fue pagado.")
+        return redirect("ver_pago", pedido_id=pedido.id)
+
+    # Descontar stock según los pedidos de la empresa
+    items = pedido.items.all()
+
+    for item in items:
+        prod = item.producto
+        prod.stock -= item.cantidad
+        if prod.stock < 0:
+            prod.stock = 0
+        prod.save()
+
+    pedido.estado = "pagado"
+    pedido.save()
+
+    return render(request, "productos/pago_exitoso.html", {"pedido": pedido})

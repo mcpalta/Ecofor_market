@@ -28,11 +28,14 @@
             </div>
             <div class="dashboard-item">
               <h3>Generar Cotizacion</h3>
-              <a href="{% url 'mensajeria:buscar_cliente' %}" class="btn btn-primary">
+              <a href="{% url 'buscar_cotizacion' %}" class="btn btn-primary">
                 Generar cotización para cliente
             </a>
             </div>
-        {% endif %}
+
+        {%elif user.es_empresa %}
+            <a href="{% url 'ingresar_id_pago' %}" class="btn btn-primary">Realizar Pago cotización</a>
+      {% endif %}
     {% if user.es_admin %}
       <h2 class="dashboard-section-title">Panel de Administrador</h2>
 

@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 
+from usuarios.backends import Usuario
+
 class Producto(models.Model):
     CATEGORIAS = [
         ("Papelería y Dispensadores", (
@@ -65,6 +67,7 @@ class Pedido(models.Model):
     ]
 
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    numero_pedido = models.IntegerField(unique=True, null=True, blank=True)
     creado = models.DateTimeField(auto_now_add=True)
     actualizado = models.DateTimeField(auto_now=True)
     total = models.PositiveIntegerField(default=0)
@@ -113,3 +116,12 @@ class FacturaItem(models.Model):
 
     def __str__(self):
         return f"{self.cantidad} x {self.nombre}"
+    
+class PagoSimulado(models.Model):
+    pedido = models.OneToOneField(Pedido, on_delete=models.CASCADE)
+    monto = models.FloatField()
+    fecha = models.DateTimeField(auto_now_add=True)
+    pagado_por = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Pago #{self.id} - Pedido {self.pedido.id}"

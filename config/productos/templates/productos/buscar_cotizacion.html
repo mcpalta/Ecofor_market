@@ -1,0 +1,50 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Dashboard - Ecofor Market{% endblock %}
+
+{% block content %}
+
+<h2>Buscar Cotización</h2>
+
+<form method="get" action="">
+    <input type="number" name="id" placeholder="ID del pedido" required>
+    <button type="submit" class="btn btn-primary">Buscar</button>
+</form>
+
+{% if pedido %}
+<div class="card mt-4 shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h2 class="mb-0" style="text-align: left;">Resultado</h2>
+    </div>
+    <div class="mb-4" style="margin-bottom: 2rem;"></div>
+
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped mb-3">
+                <tbody>
+                    <tr>
+                        <th style="width: 180px;">ID del Pedido</th>
+                        <td>{{ pedido.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Cliente</th>
+                        <td>{{ pedido.usuario.username }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total estimado</th>
+                        <td>${{ pedido.total }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <a href="{% url 'ver_cotizacion' pedido.id %}" class="btn btn-success w-100">
+            Ver cotización completa
+        </a>
+    </div>
+</div>
+{% endif %}
+
+
+
+{% endblock %}
