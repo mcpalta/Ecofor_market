@@ -4,20 +4,22 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# -----------------------
-# SECRET & DEBUG via env
-# -----------------------
+# SECRET KEY (variable de entorno)
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
-    "django-insecure-temporal-key-please-change"  # reemplaza en producción con variable real
+    "django-insecure-temporal-key-please-change"  # reemplaza en producción si no hay variable
 )
 
+# DEBUG
 DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in ("1", "true", "yes")
 
+# ALLOWED_HOSTS
+# Reemplaza <Elastic-IP> por tu IP pública
 ALLOWED_HOSTS = os.environ.get(
     "DJANGO_ALLOWED_HOSTS",
-    "127.0.0.1,localhost,13.59.74.99"
+    "127.0.0.1,localhost,18.219.249.3"
 ).split(",")
+
 
 # -----------------------
 # Aplicaciones
@@ -155,4 +157,8 @@ LOGGING = {
     "handlers": {"console": {"class": "logging.StreamHandler"}},
     "root": {"handlers": ["console"], "level": "INFO"},
 }
+CSRF_COOKIE_SECURE = False  # Si estás en desarrollo o HTTP
+SESSION_COOKIE_SECURE = False
+CSRF_TRUSTED_ORIGINS = ['http://18.219.249.3']  # tu IP o dominio
+
 # Fin de settings.py
