@@ -480,7 +480,8 @@ def crear_pedido_cotizacion(request):
 
 @login_required
 def buscar_cotizacion(request):
-    if not request.user.tipo_cliente == "atencion_cliente":
+    # Sólo acceso para personal de atención
+    if not getattr(request.user, "tipo_cliente", None) == "atencion_cliente":
         messages.error(request, "No tienes permiso para acceder a esta sección.")
         return redirect("home")
 
@@ -488,13 +489,24 @@ def buscar_cotizacion(request):
     try:
         if request.method == "GET" and "id" in request.GET:
             pedido_id = request.GET.get("id")
-            pedido = Pedido.objects.filter(id=pedido_id).first()
-
-            if not pedido.exsists():
-                messages.error(request, "No existe ninguna cotización con ese ID.")
-
-    except:
-        messages.error(request, f"Error al buscar la cotización: {e}")
+            # validar que venga un id numérico
+            try:
+                pedido_id_int = int(pedido_id)
+            except (TypeError, ValueError):
+                messages.error(request, "ID inválido. Ingresa un número válido.")
+                pedido = None
+            else:
+                pedido = Pedido.objects.filter(id=pedido_id_int).first()
+                if not pedido:
+                    messages.error(request, "No existe ninguna cotización con ese ID.")
+    except Exception as e:
+        # Loguea el error en los logs y muestra mensaje amigable
+        # evita mostrar el stacktrace en producción en el navegador
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.exception("Error buscando cotización")
+        messages.error(request, "Ocurrió un error al buscar la cotización. Revisa logs.")
+        pedido = None
 
     return render(request, "productos/buscar_cotizacion.html", {"pedido": pedido})
 
